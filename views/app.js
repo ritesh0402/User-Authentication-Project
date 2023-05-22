@@ -1,12 +1,19 @@
 const express = require('express');
 const app = express();
+const mongoose = require('mongoose');
 const session = require('express-session');
 const loginRoute = require('./routes/login')
 const logoutRoute = require('./routes/logout')
 const registerRoute = require('./routes/register')
-const connectdb = require('./db');
 
-connectdb();
+mongoose.connect('mongodb://localhost:27017/authTest', { useNewUrlParser: true, useUnifiedTopology: true })
+   .then(() => {
+      console.log("Connected to Mongo")
+   })
+   .catch(err => {
+      console.log("Couldn't connect to Mongo")
+      console.log(err)
+   })
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
