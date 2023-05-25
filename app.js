@@ -6,13 +6,26 @@ const logoutRoute = require('./routes/logout')
 const registerRoute = require('./routes/register')
 const connectdb = require('./db');
 
+const MongoStore = require('connect-mongo')
+
+const store = MongoStore.create({
+   mongoUrl: process.env.MONGOURI,
+   touchAfter: 24 * 60 * 60,
+   crypto: { secret: 'codeword' }
+})
+
+store.on("error", function (err) {
+   console.log('store error')
+   console.log(err)
+})
+
 connectdb();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 app.use(express.urlencoded({ extended: true }));
 
-const sessionOpt = { secret: 'codeword', resave: false, saveUninitialized: false }
+const sessionOpt = { store, secret: 'codeword', resave: false, saveUninitialized: false }
 app.use(session(sessionOpt));
 
 const requireLogin = (req, res, next) => {
